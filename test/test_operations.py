@@ -664,6 +664,17 @@ class TestSelect(XlaTestCase):
     self.assertEqual(tx, sx.data.cpu())
 
 
+class TestRandom(XlaTestCase):
+
+  def test_random_from_to_bool(self):
+    for from_, to_ in [[0, 1], [0, 2], [1, 2]]:
+      x = _gen_tensor(10, device=xm.xla_device())
+      x.random_(from_, to_)
+      delta = 1
+      self.assertTrue(from_ <= x.to(torch.int).min() < (from_ + delta))
+      self.assertTrue((to_ - delta) <= x.to(torch.int).max() < to_)
+
+
 class TestBinaryCrossEntropyLimitValue(XlaTestCase):
 
   def test_cross_entropy_loss(self):
